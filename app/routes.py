@@ -51,8 +51,8 @@ def event_stream_get(db: Session):
         event_data = db.query(Events).filter(Events.id > last_id).all()
         if event_data:
             for item in event_data:
-                data = EventsResponse.model_validate(item).dict()
-                print(data)
+                data = EventsResponse.model_validate(item).model_dump_json()  # Serializes datetime
+                yield f"data: {data}\n\n"
                 last_id = item.id
 
         time.sleep(10)
