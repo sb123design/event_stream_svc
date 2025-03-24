@@ -1,12 +1,16 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class EventsCreate(BaseModel):
-    event_at: str
     metric: str
     value: float
+    event_at: datetime = None
 
-class EventsResponse(EventsCreate):
+class EventsResponse(BaseModel):
     id: int
-    
+    metric: str
+    value: float
+    event_at: datetime
+
     class Config:
         from_attributes = True
