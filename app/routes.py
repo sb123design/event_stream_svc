@@ -9,6 +9,7 @@ from .database import get_db
 from .models import Events
 from .schemas import EventsResponse, EventsCreate
 from datetime import datetime
+from .utilities import event_stream_get
 
 router = APIRouter()
 
@@ -31,9 +32,9 @@ def create_event(event_data: EventsCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/stream")
-def stream_timeseries(db: Session = Depends(get_db)):
+def stream_timeseries(interval: float = 10.0, db: Session = Depends(get_db)):
     return StreamingResponse(
-        event_stream_get(db),
+        event_stream_get(db, interval),
         media_type="text/event-stream",
         headers={ 
             "Cache-Control": "no-cache",
@@ -44,15 +45,3 @@ def stream_timeseries(db: Session = Depends(get_db)):
 @router.get("/history", response_model=list[EventsResponse])
 def get_timeseries(n: int = 10, db: Session = Depends(get_db)):
     return db.query(Events).order_by(Events.event_at.desc()).limit(n).all()
-
-def event_stream_get(db: Session):
-    last_id = 0
-    while True:
-        event_data = db.query(Events).filter(Events.id > last_id).all()
-        if event_data:
-            for item in event_data:
-                data = EventsResponse.model_validate(item).model_dump_json()  # Serializes datetime
-                yield f"data: {data}\n\n"
-                last_id = item.id
-
-        time.sleep(10)
