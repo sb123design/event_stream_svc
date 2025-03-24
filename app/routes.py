@@ -5,9 +5,9 @@ import asyncio
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from fastapi.responses import StreamingResponse
-from database import get_db
-from models import Events
-from schemas import EventsResponse
+from .database import get_db
+from .models import Events
+from .schemas import EventsResponse
 from datetime import datetime
 
 router = APIRouter()

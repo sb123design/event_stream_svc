@@ -5,7 +5,7 @@ class EventsCreate(BaseModel):
     metric: str
     value: float
 
-class EventResponse(EventsCreate):
+class EventsResponse(EventsCreate):
     id: int
     
     class Config:
