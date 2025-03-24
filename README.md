@@ -18,3 +18,10 @@ Keep adding more dummy data with the POST call from above.
 
 To test the history endpoint, change n to whatever number we want to return:
 `curl "http://127.0.0.1:8000/history?n=2"`
+
+
+Note:
+We can also use the endpoint `curl "http://127.0.0.1:8000/create_dummy_data"` to create 10 random rows of dummy data
+
+To Test the optional component of custom interval time on /stream endpoint:
+`curl "127.0.0.1:8000/stream?interval=1"`

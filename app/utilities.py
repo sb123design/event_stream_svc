@@ -2,6 +2,8 @@ import time
 from sqlalchemy.orm import Session
 from .models import Events
 from .schemas import EventsResponse
+from datetime import datetime
+import random
 
 
 def event_stream_get(db: Session, interval: float = 10.0):
@@ -11,7 +13,19 @@ def event_stream_get(db: Session, interval: float = 10.0):
         if event_data:
             for item in event_data:
                 data = EventsResponse.model_validate(item).model_dump_json()  # Serializes datetime
-                yield f"data: {data}\n\n"
+                yield f"{data}\n\n"
                 last_id = item.id
+                time.sleep(interval)
 
-        time.sleep(interval)
+
+def create_dummy_data(db: Session):
+    for _ in range(10):
+        event = Events(
+            metric="temperature",
+            value=round(random.uniform(0, 100), 2),
+            event_at=datetime.now()
+        )
+        db.add(event)
+    db.commit()
+    db.refresh(event)
+    return event
